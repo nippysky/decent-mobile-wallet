@@ -48,3 +48,8 @@ export type ImportCustomTokenProp = {
   decimals: number;
   balance: number;
 };
+
+// Create a generic type for secret phrases
+export type SecretPhraseType = {
+  [key: string]: string;
+};
