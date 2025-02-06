@@ -1,12 +1,7 @@
 import { StyleSheet, View, Image, Text, TouchableOpacity } from "react-native";
 import React from "react";
 import ScreenWrapper from "@/lib/components/ScreenWrapper";
-import {
-  BUTTON_TEXT,
-  HEADING_BOLD,
-  INFO_TEXT,
-  NORMAL_TEXT,
-} from "@/lib/constants/font";
+import { BUTTON_TEXT, HEADING_BOLD, INFO_TEXT } from "@/lib/constants/font";
 import { BUTTONSTYLE } from "@/lib/constants/styles";
 import { COLORS } from "@/lib/constants/colors";
 import { router } from "expo-router";

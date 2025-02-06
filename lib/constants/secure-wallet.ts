@@ -2,6 +2,17 @@ import * as SecureStore from "expo-secure-store";
 
 const WALLET_ADDRESS_KEY = "wallet_address";
 const WALLET_PASSPHRASE = "wallet_passphrase";
+const PIN_KEY = "wallet_pin";
+
+// Function to securely save the PIN
+export const savePin = async (pin: string) => {
+  try {
+    await SecureStore.setItemAsync(PIN_KEY, pin);
+    console.log("PIN saved successfully");
+  } catch (error) {
+    console.error("Error saving PIN:", error);
+  }
+};
 
 // //////////////////////////////////////////////////////////////////////////////////
 // SAVE WALLET DATA
