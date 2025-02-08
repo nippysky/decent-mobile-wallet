@@ -42,12 +42,8 @@
         "expo-font",
         {
           "fonts": [
-            "./assets/fonts/PoppinsExtraBold.otf",
-            "./assets/fonts/PoppinsBold.otf",
-            "./assets/fonts/PoppinsBlack.otf",
-            "./assets/fonts/PoppinsMedium.otf",
-            "./assets/fonts/PoppinsSemiBold.otf",
-            "./assets/fonts/PoppinsRegular.otf"
+            "../assets/fonts/NexaBold.otf",
+            "../assets/fonts/NexaLight.otf"
           ]
         }
       ],

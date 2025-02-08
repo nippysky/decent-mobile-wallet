@@ -151,6 +151,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     color: COLORS.white,
     borderRadius: 20,
+    fontFamily: "NexaLight",
   },
   tokensList: {
     width: "100%",

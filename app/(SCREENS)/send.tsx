@@ -22,8 +22,16 @@ import * as Clipboard from "expo-clipboard";
 import { BUTTONSTYLE } from "@/lib/constants/styles";
 import { Modal, Searchbar, Card } from "react-native-paper";
 
+// Define the type for a cryptocurrency
+type Crypto = {
+  id: number;
+  name: string;
+  symbol: string;
+  icon: string;
+};
+
 // Dummy cryptocurrency data
-const dummyCryptos = [
+const dummyCryptos: Crypto[] = [
   {
     id: 1,
     name: "Bitcoin",
@@ -46,14 +54,18 @@ const dummyCryptos = [
 ];
 
 export default function Send() {
-  const [receiverAddress, setReceiverAddress] = useState("");
-  const [amount, setAmount] = useState("");
-  const [selectedToken, setSelectedToken] = useState(dummyCryptos[2]); // Default to DECETN
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
+  const [receiverAddress, setReceiverAddress] = useState<string>("");
+  const [amount, setAmount] = useState<string>("");
+  const [selectedToken, setSelectedToken] = useState<Crypto>(dummyCryptos[2]); // Default to DECETN
+  const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
+  const [searchQuery, setSearchQuery] = useState<string>("");
+
+  //////////////////////////////////////////////////////////////////////////
+
+  ///////////////////////////////////////////////////////////////////////////////
 
   // Function to paste copied text into Receiver Address
-  const pasteReceiverAddress = async () => {
+  const pasteReceiverAddress = async (): Promise<void> => {
     try {
       const text = await Clipboard.getStringAsync();
       setReceiverAddress(text);
@@ -63,14 +75,7 @@ export default function Send() {
   };
 
   // Function to handle token selection
-  const handleTokenSelection = (
-    token: React.SetStateAction<{
-      id: number;
-      name: string;
-      symbol: string;
-      icon: string;
-    }>
-  ) => {
+  const handleTokenSelection = (token: Crypto): void => {
     setSelectedToken(token);
     setIsModalVisible(false);
   };
@@ -184,7 +189,7 @@ export default function Send() {
         </ScrollView>
       </ScreenWrapper>
 
-      {/* Token Selection Modal */}
+      {/* /////////////////////////////////////Token Selection Modal /////////////////////////*/}
       <Modal
         visible={isModalVisible}
         onDismiss={() => setIsModalVisible(false)}
@@ -192,9 +197,11 @@ export default function Send() {
       >
         <View style={styles.modalContent}>
           <Searchbar
-            placeholder="Search Cryptocurrency"
+            placeholder="Search Token"
+            placeholderTextColor={COLORS.decentAltText}
             onChangeText={setSearchQuery}
             value={searchQuery}
+            inputStyle={{ fontFamily: "NexaLight", color: COLORS.white }}
             style={styles.searchBar}
           />
           <ScrollView style={styles.cryptoList}>
@@ -210,8 +217,12 @@ export default function Send() {
                       width={30}
                       height={30}
                     />
-                    <Text style={styles.cryptoName}>{crypto.name}</Text>
-                    <Text style={styles.cryptoSymbol}>{crypto.symbol}</Text>
+                    <Text style={[styles.cryptoName, NORMAL_TEXT]}>
+                      {crypto.name}
+                    </Text>
+                    <Text style={[styles.cryptoSymbol, INFO_TEXT]}>
+                      {crypto.symbol}
+                    </Text>
                   </Card.Content>
                 </Card>
               </TouchableOpacity>
@@ -255,6 +266,7 @@ const styles = StyleSheet.create({
     height: 50,
     color: COLORS.white,
     fontSize: 20,
+    fontFamily: "NexaLight",
   },
   paste: {
     width: "20%",
@@ -284,22 +296,28 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    backgroundColor: "rgba(0, 0, 0, 0.9)", // Darker backdrop
   },
   modalContent: {
-    width: "90%",
+    width: "100%",
+    maxHeight: "100%",
     backgroundColor: COLORS.decentAlt,
-    borderRadius: 10,
     padding: 20,
   },
   searchBar: {
     marginBottom: 10,
+    borderRadius: 0,
+    backgroundColor: COLORS.decentInput,
+    fontFamily: "NexaLight",
   },
   cryptoList: {
-    maxHeight: 300,
+    height: "100%",
+    marginTop: 50,
   },
   cryptoCard: {
-    marginBottom: 10,
+    marginBottom: 15,
+    borderRadius: 0,
+    backgroundColor: COLORS.decentAltLight,
   },
   cryptoContent: {
     flexDirection: "row",

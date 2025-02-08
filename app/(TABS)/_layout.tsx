@@ -16,7 +16,7 @@ export default function TabLayout() {
       screenOptions={{
         tabBarActiveTintColor: COLORS.decentPrimary,
         headerShown: false,
-        tabBarLabelStyle: { fontFamily: "PoppinsMedium" },
+        tabBarLabelStyle: { fontFamily: "NexaLight" },
         tabBarIconStyle: {
           marginVertical: 5,
         },
