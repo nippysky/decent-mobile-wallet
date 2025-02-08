@@ -42,18 +42,16 @@
         "expo-font",
         {
           "fonts": [
-            "./assets/fonts/Poppins-ExtraBold.ttf",
-            "./assets/fonts/Poppins-ExtraLight.ttf",
-            "./assets/fonts/Poppins-Bold.ttf",
-            "./assets/fonts/Poppins-Black.ttf",
-            "./assets/fonts/Poppins-Light.ttf",
-            "./assets/fonts/Poppins-Medium.ttf",
-            "./assets/fonts/Poppins-SemiBold.ttf",
-            "./assets/fonts/Poppins-Regular.ttf",
-            "./assets/fonts/Poppins-Thin.ttf"
+            "./assets/fonts/PoppinsExtraBold.otf",
+            "./assets/fonts/PoppinsBold.otf",
+            "./assets/fonts/PoppinsBlack.otf",
+            "./assets/fonts/PoppinsMedium.otf",
+            "./assets/fonts/PoppinsSemiBold.otf",
+            "./assets/fonts/PoppinsRegular.otf"
           ]
         }
-      ]
+      ],
+      "expo-asset"
     ],
     "experiments": {
       "typedRoutes": true

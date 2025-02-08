@@ -21,14 +21,12 @@ SplashScreen.setOptions({
 
 export default function RootLayout() {
   const [loaded] = useFonts({
-    "Poppins-ExtraBold": require("../assets/fonts/Poppins-ExtraBold.ttf"),
-    "Poppins-Black": require("../assets/fonts/Poppins-Black.ttf"),
-    "Poppins-Bold": require("../assets/fonts/Poppins-Bold.ttf"),
-    "Poppins-SemiBold": require("../assets/fonts/Poppins-SemiBold.ttf"),
-    "Poppins-Regular": require("../assets/fonts/Poppins-Regular.ttf"),
-    "Poppins-Light": require("../assets/fonts/Poppins-Light.ttf"),
-    "Poppins-ExtraLight": require("../assets/fonts/Poppins-ExtraLight.ttf"),
-    "Poppins-Thin": require("../assets/fonts/Poppins-Thin.ttf"),
+    PoppinsExtraBold: require("../assets/fonts/PoppinsExtraBold.otf"),
+    PoppinsBlack: require("../assets/fonts/PoppinsBlack.otf"),
+    PoppinsBold: require("../assets/fonts/PoppinsBold.otf"),
+    PoppinsSemiBold: require("../assets/fonts/PoppinsSemiBold.otf"),
+    PoppinsMedium: require("../assets/fonts/PoppinsMedium.otf"),
+    PoppinsRegular: require("../assets/fonts/PoppinsRegular.otf"),
   });
 
   useEffect(() => {
@@ -56,6 +54,9 @@ export default function RootLayout() {
                   headerShadowVisible: false,
                 }}
               />
+              <Stack.Screen name="(ONBOARD)" />
+              <Stack.Screen name="(TABS)" />
+              <Stack.Screen name="(SCREENS)" />
             </Stack>
           </PaperProvider>
         </BottomSheetModalProvider>

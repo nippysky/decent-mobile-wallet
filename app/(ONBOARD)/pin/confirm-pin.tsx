@@ -44,7 +44,7 @@ export default function ConfirmPIN() {
 
     if (isMatch) {
       await savePin(pin as string); // Save PIN securely
-      router.push("/wallet");
+      router.push("/(TABS)/wallet");
     } else {
       // Trigger haptic feedback
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);

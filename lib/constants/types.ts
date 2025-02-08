@@ -53,3 +53,11 @@ export type ImportCustomTokenProp = {
 export type SecretPhraseType = {
   [key: string]: string;
 };
+
+export type TokenCardProp = {
+  iconUri: string;
+  tokenName: string;
+  tokenSymbol: string;
+  amount: string;
+  onPress: () => void;
+};

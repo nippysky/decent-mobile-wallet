@@ -3,6 +3,7 @@ export const COLORS = {
   decentAlt: "#000904",
   decentAltText: "#8E8E8E",
   decentAltLight: "#0C160F",
+  decentInput: "#090A09",
 
   // //////////////////////////
   white: "#ffffff",
