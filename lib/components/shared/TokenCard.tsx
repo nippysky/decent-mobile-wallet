@@ -22,8 +22,8 @@ export default function TokenCard({
           source={{
             uri: iconUri,
           }}
-          width={40}
-          height={40}
+          width={35}
+          height={35}
         />
         <View style={styles.tokenName}>
           <Text style={NORMAL_TEXT}>{tokenName}</Text>

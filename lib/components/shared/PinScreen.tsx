@@ -10,9 +10,11 @@ import {
 import { Href, useRouter } from "expo-router";
 import * as Haptics from "expo-haptics";
 import { FontAwesome5, SimpleLineIcons } from "@expo/vector-icons";
-import { HEADING_BOLD } from "@/lib/constants/font";
+import { BUTTON_TEXT, HEADING_BOLD, NORMAL_TEXT } from "@/lib/constants/font";
 import ScreenWrapper from "../ScreenWrapper";
 import { COLORS } from "@/lib/constants/colors";
+import { Modal, Portal, Button, Dialog } from "react-native-paper"; // Import react-native-paper components
+import { BUTTONSTYLE } from "@/lib/constants/styles";
 
 const PIN_LENGTH = 5;
 
@@ -36,6 +38,7 @@ const PinScreen: React.FC<PinScreenProps> = ({
   errorMessage,
 }) => {
   const [code, setCode] = useState<number[]>([]);
+  const [visible, setVisible] = useState(false); // State for modal visibility
   const router = useRouter();
 
   useEffect(() => {
@@ -82,6 +85,19 @@ const PinScreen: React.FC<PinScreenProps> = ({
   const handleClearAll = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     setCode([]);
+  };
+
+  // Show the modal
+  const showModal = () => setVisible(true);
+
+  // Hide the modal
+  const hideModal = () => setVisible(false);
+
+  // Handle "Yes" button press in the modal
+  const handleResetWallet = () => {
+    hideModal();
+    // Add logic to reset the wallet here
+    console.log("Reset wallet logic goes here");
   };
 
   return (
@@ -182,6 +198,82 @@ const PinScreen: React.FC<PinScreenProps> = ({
             </TouchableOpacity>
           </View>
         </View>
+
+        {/* Forget PIN Button */}
+        <TouchableOpacity style={styles.forgetPinButton} onPress={showModal}>
+          <Text style={[NORMAL_TEXT, { color: COLORS.decentPrimary }]}>
+            Forget PIN?
+          </Text>
+        </TouchableOpacity>
+
+        {/* //////////////////////////////////// */}
+        {/* Modal Dialog */}
+        <Portal>
+          <Modal
+            visible={visible}
+            onDismiss={hideModal}
+            contentContainerStyle={styles.modalContainer}
+            theme={{ colors: { backdrop: "rgba(0, 0, 0, 0.9)" } }}
+            dismissable={false}
+          >
+            <View style={{ width: "100%" }}>
+              {/* Info */}
+              <View
+                style={{
+                  justifyContent: "center",
+                  alignItems: "center",
+                  gap: 10,
+                }}
+              >
+                <Text
+                  style={[NORMAL_TEXT, { textAlign: "center", lineHeight: 25 }]}
+                >
+                  If you have forgotten your PIN, you will have to reset your
+                  wallet by re-entering the passphrase again or creating a new
+                  wallet.
+                </Text>
+              </View>
+
+              {/* Buttons */}
+              <View
+                style={{
+                  width: "100%",
+                  flexDirection: "row",
+                  gap: 10,
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  marginTop: 30,
+                }}
+              >
+                <TouchableOpacity
+                  style={[BUTTONSTYLE, { width: "45%" }]}
+                  activeOpacity={0.5}
+                  onPress={() => {}}
+                >
+                  <Text style={BUTTON_TEXT}>Yes</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  style={[
+                    BUTTONSTYLE,
+                    {
+                      width: "45%",
+                      borderWidth: 1,
+                      borderColor: COLORS.decentPrimary,
+                      backgroundColor: COLORS.decentAlt,
+                    },
+                  ]}
+                  activeOpacity={0.5}
+                  onPress={hideModal}
+                >
+                  <Text style={[BUTTON_TEXT, { color: COLORS.decentPrimary }]}>
+                    No
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </Modal>
+        </Portal>
       </ScrollView>
     </ScreenWrapper>
   );
@@ -227,8 +319,8 @@ const styles = StyleSheet.create({
     marginVertical: 10, // Add vertical spacing between rows
   },
   numberText: {
-    fontSize: 30,
-    color: "#fff",
+    fontSize: 40,
+    color: COLORS.white,
   },
   bottomRow: {
     flexDirection: "row",
@@ -247,5 +339,21 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginTop: 10,
     fontSize: 16,
+  },
+  forgetPinButton: {
+    marginVertical: 20,
+    alignSelf: "center",
+  },
+  forgetPinText: {
+    color: COLORS.decentPrimary,
+    fontSize: 16,
+    textAlign: "center",
+  },
+  modalContainer: {
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: COLORS.decentAlt,
+    width: "100%",
+    padding: 30,
   },
 });

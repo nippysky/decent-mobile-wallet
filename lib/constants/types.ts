@@ -61,3 +61,9 @@ export type TokenCardProp = {
   amount: string;
   onPress: () => void;
 };
+
+export type OptionCardType = {
+  title: string;
+  icon: JSX.Element;
+  onPress: () => void;
+};

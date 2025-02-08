@@ -13,10 +13,12 @@ import { COLORS } from "@/lib/constants/colors";
 import QRCode from "react-native-qrcode-svg";
 import { FontAwesome6, Ionicons, Octicons } from "@expo/vector-icons";
 import { router } from "expo-router";
+import * as Clipboard from "expo-clipboard"; // Import Clipboard module
 
 export default function Receive() {
   const userAddress = "0xe0806eC150E90b44122fCcf975A14D9aAafba429";
 
+  // Share Address Function
   const shareAddress = async () => {
     try {
       const result = await Share.share({
@@ -34,6 +36,17 @@ export default function Receive() {
       }
     } catch (error) {
       console.error("Oops! Failed to share address", error);
+    }
+  };
+
+  // Copy Address Function
+  const copyAddress = async () => {
+    try {
+      await Clipboard.setStringAsync(userAddress);
+      console.log("Address copied to clipboard!");
+    } catch (error) {
+      console.error("Oops! Failed to copy address", error);
+      alert("Failed to copy address. Please try again.");
     }
   };
 
@@ -74,7 +87,7 @@ export default function Receive() {
         {/* Copy & Share Buttons */}
         <View style={styles.actionButtonsContainer}>
           {/* Copy Button */}
-          <TouchableOpacity style={styles.actionButton}>
+          <TouchableOpacity style={styles.actionButton} onPress={copyAddress}>
             <Text style={[INFO_TEXT, styles.actionButtonText]}>Copy</Text>
             <Ionicons
               name="copy-sharp"

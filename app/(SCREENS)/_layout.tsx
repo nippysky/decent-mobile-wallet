@@ -7,6 +7,10 @@ export default function ScreensLayout() {
       <Stack.Screen name="send" />
       <Stack.Screen name="recieve" />
       <Stack.Screen name="settings" />
+      <Stack.Screen name="token" />
+      <Stack.Screen name="backup/backup-note" />
+      <Stack.Screen name="backup/enter-pin" />
+      <Stack.Screen name="backup/backup-seedphrase" />
     </Stack>
   );
 }

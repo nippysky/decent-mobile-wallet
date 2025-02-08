@@ -14,6 +14,16 @@ export const savePin = async (pin: string) => {
   }
 };
 
+// Function to securely retrieve PIN
+export const getPin = async (): Promise<string | null> => {
+  try {
+    const pin = await SecureStore.getItemAsync(PIN_KEY);
+    return pin; // Return just the pin value
+  } catch (error) {
+    console.error("Error getting PIN:", error);
+    return null; // Return null in case of error
+  }
+};
 // //////////////////////////////////////////////////////////////////////////////////
 // SAVE WALLET DATA
 export const saveWalletData = async (address: string, passphrase: string) => {

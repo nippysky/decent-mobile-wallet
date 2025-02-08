@@ -7,7 +7,7 @@ import {
 } from "react-native";
 import React from "react";
 import ScreenWrapper from "@/lib/components/ScreenWrapper";
-import { HEADING_BOLD, INFO_TEXT, NORMAL_TEXT } from "@/lib/constants/font";
+import { HEADING_BOLD, INFO_TEXT } from "@/lib/constants/font";
 import { shortenAddress } from "@/lib/utils";
 import { COLORS } from "@/lib/constants/colors";
 import { FontAwesome6, Ionicons } from "@expo/vector-icons";
@@ -23,12 +23,8 @@ export default function WalletScreen() {
         {/* Screen Head */}
         <View style={styles.screenHead}>
           <View style={styles.screenHeadCenter}>
-            <Text style={[HEADING_BOLD, { textAlign: "center" }]}>
-              Decent Wallet
-            </Text>
-
             <TouchableOpacity style={styles.addressContainer}>
-              <Text style={[NORMAL_TEXT, { color: COLORS.decentAltText }]}>
+              <Text style={[HEADING_BOLD, { fontSize: 18 }]}>
                 {shortenAddress("0xe0806eC150E90b44122fCcf975A14D9aAafba429")}
               </Text>
               <Ionicons
@@ -91,7 +87,7 @@ export default function WalletScreen() {
                 tokenName={token.tokenName}
                 tokenSymbol={token.tokenSymbol}
                 amount={token.amount}
-                onPress={() => {}}
+                onPress={() => router.push("/(SCREENS)/token")}
               />
             ))}
           </View>
