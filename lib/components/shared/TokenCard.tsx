@@ -29,12 +29,16 @@ export default function TokenCard({
           <Text
             style={[
               NORMAL_TEXT,
-              { fontFamily: "ManropeSemibold", letterSpacing: 0.85 },
+              {
+                fontFamily: "ManropeSemibold",
+                letterSpacing: 0.5,
+                fontSize: 15,
+              },
             ]}
           >
             {tokenName}
           </Text>
-          <Text style={INFO_TEXT}>{tokenSymbol}</Text>
+          <Text style={[INFO_TEXT, { fontSize: 13 }]}>{tokenSymbol}</Text>
         </View>
       </View>
 

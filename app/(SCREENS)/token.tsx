@@ -11,9 +11,20 @@ import ScreenWrapper from "@/lib/components/ScreenWrapper";
 import { COLORS } from "@/lib/constants/colors";
 import { HEADING_BOLD, INFO_TEXT, NORMAL_TEXT } from "@/lib/constants/font";
 import { Feather, FontAwesome6 } from "@expo/vector-icons";
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
+import { formatNumberCustom } from "@/lib/utils";
+import * as Linking from "expo-linking";
 
 export default function Token() {
+  const { name, balance, symbol, contractAddress, icon } =
+    useLocalSearchParams();
+
+  const handleOpenExplorer = () => {
+    Linking.openURL(
+      `https://blockexplorer.electroneum.com/address/${contractAddress}`
+    ).catch((err) => console.error("Failed to open Explorer:", err));
+  };
+
   return (
     <ScreenWrapper>
       <ScrollView>
@@ -33,7 +44,7 @@ export default function Token() {
 
         {/* Header Text */}
         <View style={styles.headerContainer}>
-          <Text style={HEADING_BOLD}>Decentroneum</Text>
+          <Text style={HEADING_BOLD}>{name}</Text>
         </View>
 
         {/* ////PRICE & LOGO ///// */}
@@ -47,7 +58,7 @@ export default function Token() {
 
           <Image
             source={{
-              uri: "https://s2.coinmarketcap.com/static/img/coins/64x64/2137.png",
+              uri: `${icon}`,
             }}
             width={50}
             height={50}
@@ -56,7 +67,9 @@ export default function Token() {
 
         {/* /////// AMOUNT & AmountInPrice////////  */}
         <View style={styles.amountValue}>
-          <Text style={HEADING_BOLD}>385,000,000,000,000 DECETN</Text>
+          <Text style={HEADING_BOLD}>
+            {formatNumberCustom(Number(balance))} {symbol}
+          </Text>
           <Text style={[NORMAL_TEXT, { color: COLORS.decentAltText }]}>
             $400,000,000.35
           </Text>
@@ -84,10 +97,15 @@ export default function Token() {
             <Text style={INFO_TEXT}>Receive</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.actionButton} onPress={() => {}}>
-            <Feather name="external-link" size={24} color={COLORS.white} />
-            <Text style={INFO_TEXT}>Contract</Text>
-          </TouchableOpacity>
+          {symbol !== "ETN" && (
+            <TouchableOpacity
+              style={styles.actionButton}
+              onPress={handleOpenExplorer}
+            >
+              <Feather name="external-link" size={24} color={COLORS.white} />
+              <Text style={INFO_TEXT}>Contract</Text>
+            </TouchableOpacity>
+          )}
         </View>
       </ScrollView>
     </ScreenWrapper>

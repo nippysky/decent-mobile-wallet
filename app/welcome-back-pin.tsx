@@ -56,7 +56,7 @@ export default function WelcomeBackPIN() {
     const isMatch = result as boolean;
 
     if (isMatch) {
-      router.push("/(TABS)/wallet");
+      router.push("/(SCREENS)/wallet");
     } else {
       // Trigger haptic feedback
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);

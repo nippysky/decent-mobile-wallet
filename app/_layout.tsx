@@ -60,7 +60,6 @@ export default function RootLayout() {
               />
               <Stack.Screen name="welcome-back-pin" />
               <Stack.Screen name="(ONBOARD)" />
-              <Stack.Screen name="(TABS)" />
               <Stack.Screen name="(SCREENS)" />
             </Stack>
           </PaperProvider>

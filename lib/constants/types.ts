@@ -67,3 +67,12 @@ export type OptionCardType = {
   icon: JSX.Element;
   onPress: () => void;
 };
+
+
+export interface Token {
+  name: string;
+  symbol: string;
+  balance: number;
+  contractAddress?: string; // Not required for native token
+  icon: string;
+}

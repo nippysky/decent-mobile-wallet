@@ -1,4 +1,10 @@
-import { ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
+import {
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+  Text,
+} from "react-native";
 import * as Linking from "expo-linking";
 import React from "react";
 import ScreenWrapper from "@/lib/components/ScreenWrapper";
@@ -9,6 +15,9 @@ import Backup from "@/assets/images/options/Backup";
 import OptionCard from "@/lib/components/shared/OptionCard";
 import Telegram from "@/assets/images/options/Telegram";
 import X from "@/assets/images/options/x";
+import { NORMAL_TEXT } from "@/lib/constants/font";
+import { removeWalletData } from "@/lib/constants/secure-wallet";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function Settings() {
   const handleTelegramPress = () => {
@@ -21,6 +30,12 @@ export default function Settings() {
     Linking.openURL("https://x.com/decentroneum").catch((err) =>
       console.error("Failed to open X link:", err)
     );
+  };
+
+  const handleDeleteWallet = async () => {
+    await AsyncStorage.removeItem("isFirstTimeUser");
+    await removeWalletData();
+    router.replace("/(ONBOARD)/auth-page");
   };
 
   return (
@@ -56,7 +71,7 @@ export default function Settings() {
             icon={<Backup />}
           />
           <OptionCard
-            title={"Join the Decentroneum channel"}
+            title={"Join our TG channel"}
             onPress={handleTelegramPress}
             icon={<Telegram />}
           />
@@ -65,6 +80,31 @@ export default function Settings() {
             onPress={handleXPress}
             icon={<X />}
           />
+        </View>
+
+        {/* ///////////////////////////////////////// */}
+        <View
+          style={{
+            justifyContent: "center",
+            alignItems: "center",
+            marginTop: 30,
+          }}
+        >
+          <TouchableOpacity onPress={handleDeleteWallet}>
+            <Text
+              style={[
+                NORMAL_TEXT,
+                {
+                  color: COLORS.red,
+                  textAlign: "center",
+                  fontSize: 17,
+                  fontFamily: "ManropeBold",
+                },
+              ]}
+            >
+              Delete Wallet
+            </Text>
+          </TouchableOpacity>
         </View>
       </ScrollView>
     </ScreenWrapper>
