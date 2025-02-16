@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   View,
   ActivityIndicator,
+  TextInput,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import ScreenWrapper from "@/lib/components/ScreenWrapper";
@@ -13,16 +14,28 @@ import { shortenAddress } from "@/lib/utils";
 import { COLORS } from "@/lib/constants/colors";
 import { FontAwesome6, Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
-import { TextInput } from "react-native-gesture-handler";
-import { TOKENS } from "@/lib/constants/app-data";
 import TokenCard from "@/lib/components/shared/TokenCard";
 import { getWalletData } from "@/lib/constants/secure-wallet";
+import { usePostData } from "@/lib/api";
+
+// Define API response structure
+interface Token {
+  name: string;
+  symbol: string;
+  balance: number;
+  contractAddress?: string; // Not required for native token
+  icon: string;
+}
 
 export default function WalletScreen() {
   const [walletAddress, setWalletAddress] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [tokens, setTokens] = useState<Token[]>([]);
+  const [nativeToken, setNativeToken] = useState<Token | null>(null);
+  const [loadingWallet, setLoadingWallet] = useState(true);
+  const [loadingTokens, setLoadingTokens] = useState(false);
+  const [loadingNative, setLoadingNative] = useState(false);
 
-  // Fetch wallet address on component mount
+  // Fetch Wallet Address on Component Mount
   useEffect(() => {
     const fetchWalletAddress = async () => {
       try {
@@ -31,12 +44,71 @@ export default function WalletScreen() {
       } catch (error) {
         console.error("Error fetching wallet address:", error);
       } finally {
-        setLoading(false);
+        setLoadingWallet(false);
       }
     };
 
     fetchWalletAddress();
   }, []);
+
+  // Fetch Native Token (ETN) Balance
+  const { mutate: fetchNativeToken } = usePostData<
+    { address: string },
+    { balance: number }
+  >("/api/mainnet");
+
+  useEffect(() => {
+    if (walletAddress) {
+      setLoadingNative(true);
+      fetchNativeToken(
+        { address: walletAddress },
+        {
+          onSuccess: (response) => {
+            console.log("Fetched Native Token Balance:", response.balance);
+            setNativeToken({
+              name: "Electroneum",
+              symbol: "ETN",
+              balance: response.balance,
+              icon: "https://s2.coinmarketcap.com/static/img/coins/64x64/2137.png",
+            });
+          },
+          onError: (error) => {
+            console.error("Error fetching native token balance:", error);
+          },
+          onSettled: () => {
+            setLoadingNative(false);
+          },
+        }
+      );
+    }
+  }, [walletAddress]);
+
+  // Fetch Other Tokens Immediately After Wallet Address is Available
+  const { mutate: fetchTokens } = usePostData<
+    { address: string },
+    { tokens: Token[] }
+  >("/api/mainnet/tokens");
+
+  useEffect(() => {
+    if (walletAddress) {
+      setLoadingTokens(true);
+      fetchTokens(
+        { address: walletAddress },
+        {
+          onSuccess: (response) => {
+            console.log("Fetched Tokens:", response.tokens);
+            setTokens(response.tokens);
+          },
+          onError: (error) => {
+            console.error("Error fetching tokens:", error);
+          },
+          onSettled: () => {
+            setLoadingTokens(false);
+          },
+        }
+      );
+    }
+  }, [walletAddress]);
 
   return (
     <ScreenWrapper>
@@ -45,7 +117,7 @@ export default function WalletScreen() {
         <View style={styles.screenHead}>
           <View style={styles.screenHeadCenter}>
             <TouchableOpacity style={styles.addressContainer}>
-              {loading ? (
+              {loadingWallet ? (
                 <ActivityIndicator color={COLORS.decentPrimary} />
               ) : (
                 <Text style={[HEADING_BOLD, { fontSize: 18 }]}>
@@ -107,16 +179,35 @@ export default function WalletScreen() {
 
           {/* Tokens List */}
           <View style={styles.tokensList}>
-            {TOKENS.map((token, index) => (
+            {loadingNative ? (
+              <ActivityIndicator size="large" color={COLORS.decentPrimary} />
+            ) : nativeToken ? (
               <TokenCard
-                key={index}
-                iconUri={token.iconUri}
-                tokenName={token.tokenName}
-                tokenSymbol={token.tokenSymbol}
-                amount={token.amount}
+                key="native-token"
+                iconUri={nativeToken.icon}
+                tokenName={nativeToken.name}
+                tokenSymbol={nativeToken.symbol}
+                amount={String(nativeToken.balance)}
                 onPress={() => router.push("/(SCREENS)/token")}
               />
-            ))}
+            ) : null}
+
+            {loadingTokens ? (
+              <ActivityIndicator size="large" color={COLORS.decentPrimary} />
+            ) : tokens.length > 0 ? (
+              tokens.map((token, index) => (
+                <TokenCard
+                  key={index}
+                  iconUri={token.icon}
+                  tokenName={token.name}
+                  tokenSymbol={token.symbol}
+                  amount={String(token.balance)}
+                  onPress={() => router.push("/(SCREENS)/token")}
+                />
+              ))
+            ) : (
+              <Text style={styles.noTokensText}>No Tokens Found</Text>
+            )}
           </View>
         </View>
       </ScrollView>
@@ -183,5 +274,11 @@ const styles = StyleSheet.create({
   tokensList: {
     width: "100%",
     marginTop: 30,
+  },
+  noTokensText: {
+    textAlign: "center",
+    fontSize: 16,
+    color: COLORS.decentAltText,
+    marginTop: 20,
   },
 });

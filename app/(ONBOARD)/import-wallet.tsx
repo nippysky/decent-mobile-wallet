@@ -173,6 +173,7 @@ const styles = StyleSheet.create({
     textAlignVertical: "center",
     fontSize: 20,
     lineHeight: 30,
+    fontFamily: "ManropeSemibold",
   },
   disabledButton: {
     opacity: 0.5,

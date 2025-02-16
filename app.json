@@ -42,8 +42,13 @@
         "expo-font",
         {
           "fonts": [
-            "../assets/fonts/NexaBold.otf",
-            "../assets/fonts/NexaLight.otf"
+            "../assets/fonts/ManropeExtraBold.otf",
+            "../assets/fonts/ManropeBold.otf",
+            "../assets/fonts/ManropeSemibold.otf",
+            "../assets/fonts/ManropeMedium.otf",
+            "../assets/fonts/ManropeRegular.otf",
+            "../assets/fonts/ManropeLight.otf",
+            "../assets/fonts/ManropeThin.otf"
           ]
         }
       ],

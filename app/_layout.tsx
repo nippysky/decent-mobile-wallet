@@ -22,8 +22,13 @@ SplashScreen.setOptions({
 
 export default function RootLayout() {
   const [loaded] = useFonts({
-    NexaBold: require("../assets/fonts/NexaBold.otf"),
-    NexaLight: require("../assets/fonts/NexaLight.otf"),
+    ManropeExtraBold: require("../assets/fonts/ManropeExtraBold.otf"),
+    ManropeBold: require("../assets/fonts/ManropeBold.otf"),
+    ManropeSemibold: require("../assets/fonts/ManropeSemibold.otf"),
+    ManropeMedium: require("../assets/fonts/ManropeMedium.otf"),
+    ManropeRegular: require("../assets/fonts/ManropeRegular.otf"),
+    ManropeLight: require("../assets/fonts/ManropeLight.otf"),
+    ManropeThin: require("../assets/fonts/ManropeThin.otf"),
   });
 
   useEffect(() => {

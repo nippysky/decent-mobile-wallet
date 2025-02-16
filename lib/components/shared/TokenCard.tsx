@@ -26,12 +26,19 @@ export default function TokenCard({
           height={35}
         />
         <View style={styles.tokenName}>
-          <Text style={NORMAL_TEXT}>{tokenName}</Text>
+          <Text
+            style={[
+              NORMAL_TEXT,
+              { fontFamily: "ManropeSemibold", letterSpacing: 0.85 },
+            ]}
+          >
+            {tokenName}
+          </Text>
           <Text style={INFO_TEXT}>{tokenSymbol}</Text>
         </View>
       </View>
 
-      <Text style={NORMAL_TEXT}>{amount}</Text>
+      <Text style={[NORMAL_TEXT, { fontSize: 15 }]}>{amount}</Text>
     </TouchableOpacity>
   );
 }
