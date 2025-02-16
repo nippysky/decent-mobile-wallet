@@ -1,4 +1,5 @@
 import {
+  ActivityIndicator,
   ScrollView,
   Share,
   StyleSheet,
@@ -6,7 +7,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import ScreenWrapper from "@/lib/components/ScreenWrapper";
 import { HEADING_BOLD, INFO_TEXT, NORMAL_TEXT } from "@/lib/constants/font";
 import { COLORS } from "@/lib/constants/colors";
@@ -14,15 +15,33 @@ import QRCode from "react-native-qrcode-svg";
 import { FontAwesome6, Ionicons, Octicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import * as Clipboard from "expo-clipboard"; // Import Clipboard module
+import { getWalletData } from "@/lib/constants/secure-wallet";
 
 export default function Receive() {
-  const userAddress = "0xe0806eC150E90b44122fCcf975A14D9aAafba429";
+  const [walletAddress, setWalletAddress] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  // Fetch wallet address on component mount
+  useEffect(() => {
+    const fetchWalletAddress = async () => {
+      try {
+        const { address } = await getWalletData();
+        setWalletAddress(address);
+      } catch (error) {
+        console.error("Error fetching wallet address:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchWalletAddress();
+  }, []);
 
   // Share Address Function
   const shareAddress = async () => {
     try {
       const result = await Share.share({
-        message: userAddress,
+        message: walletAddress as string,
       });
 
       if (result.action === Share.sharedAction) {
@@ -42,7 +61,7 @@ export default function Receive() {
   // Copy Address Function
   const copyAddress = async () => {
     try {
-      await Clipboard.setStringAsync(userAddress);
+      await Clipboard.setStringAsync(walletAddress as string);
       console.log("Address copied to clipboard!");
     } catch (error) {
       console.error("Oops! Failed to copy address", error);
@@ -77,12 +96,18 @@ export default function Receive() {
         </View>
 
         {/* QR Code Box */}
-        <View style={styles.qrCodeContainer}>
-          <QRCode value={userAddress} size={250} />
-          <View style={styles.addressTextContainer}>
-            <Text style={[NORMAL_TEXT, styles.addressText]}>{userAddress}</Text>
+        {loading ? (
+          <ActivityIndicator color={COLORS.decentPrimary} />
+        ) : (
+          <View style={styles.qrCodeContainer}>
+            <QRCode value={walletAddress as string} size={250} />
+            <View style={styles.addressTextContainer}>
+              <Text style={[NORMAL_TEXT, styles.addressText]}>
+                {walletAddress as string}
+              </Text>
+            </View>
           </View>
-        </View>
+        )}
 
         {/* Copy & Share Buttons */}
         <View style={styles.actionButtonsContainer}>

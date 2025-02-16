@@ -1,4 +1,10 @@
-import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
+import {
+  StyleSheet,
+  View,
+  Text,
+  TouchableOpacity,
+  ActivityIndicator,
+} from "react-native";
 import React, { useState } from "react";
 import ScreenWrapper from "@/lib/components/ScreenWrapper";
 import BackButton from "@/lib/components/shared/BackButton";
@@ -13,11 +19,25 @@ import TabToggleSelector from "@/lib/components/shared/TabToggleSelector";
 import { BUTTONSTYLE } from "@/lib/constants/styles";
 import { router } from "expo-router";
 import Checkbox from "expo-checkbox";
+import Toast from "react-native-toast-message";
+import { useFetchData } from "@/lib/api"; // Use useFetchData for GET requests
+import { saveWalletData } from "@/lib/constants/secure-wallet";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
+// Define the type for the API response
+type WalletResponse = {
+  message: string;
+  walletDetails: {
+    address: string;
+    passphrase: string;
+  };
+};
 
 export default function CreateWallet() {
-  const [selectedOption, setSelectedOption] = useState<number | null>(null);
+  const [selectedOption, setSelectedOption] = useState<number | null>(12);
   const [isCheckedOne, setCheckedOne] = useState(false);
   const [isCheckedTwo, setCheckedTwo] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleOptionSelect = (value: string | number) => {
     const numericValue =
@@ -28,6 +48,53 @@ export default function CreateWallet() {
   };
 
   const isContinueDisabled = !(isCheckedOne && isCheckedTwo);
+
+  const handleContinue = async () => {
+    if (selectedOption === null) return;
+
+    setIsLoading(true);
+
+    try {
+      // Use useFetchData to trigger the GET request
+      const response = await refetch(); // Manually trigger the fetch
+
+      // Type the response data
+      const data = response.data as WalletResponse;
+
+      // Show success toast with the response message
+      Toast.show({
+        type: "success",
+        text1: "Success",
+        text2: data.message, // Use the message from the API response
+      });
+
+      // Save wallet data to SecureStore
+      await saveWalletData(
+        data.walletDetails.address,
+        data.walletDetails.passphrase
+      );
+
+      await AsyncStorage.setItem(
+        "isFirstTimeUser",
+        JSON.stringify({ address: data.walletDetails.address })
+      );
+
+      // Navigate to the next screen
+      router.push("/(ONBOARD)/pin/create-pin");
+    } catch (error) {
+      console.error(error);
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "Failed to create wallet. Please try again.",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Use useFetchData to fetch data
+  const { refetch } = useFetchData(`/api/etn/create-wallet/${selectedOption}`);
 
   return (
     <ScreenWrapper>
@@ -91,10 +158,14 @@ export default function CreateWallet() {
               isContinueDisabled && styles.disabledButton,
             ]}
             activeOpacity={0.5}
-            onPress={() => router.push("/(ONBOARD)/pin/create-pin")}
-            disabled={isContinueDisabled}
+            onPress={handleContinue}
+            disabled={isContinueDisabled || isLoading}
           >
-            <Text style={BUTTON_TEXT}>Continue</Text>
+            {isLoading ? (
+              <ActivityIndicator color={COLORS.white} />
+            ) : (
+              <Text style={BUTTON_TEXT}>Continue</Text>
+            )}
           </TouchableOpacity>
         </View>
       </View>

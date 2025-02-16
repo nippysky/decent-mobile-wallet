@@ -8,6 +8,8 @@ import Toast from "react-native-toast-message";
 import * as SplashScreen from "expo-splash-screen";
 import React from "react";
 import { StatusBar } from "expo-status-bar";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { toastConfig } from "@/lib/appData";
 
 // Keep the splash screen visible while we fetch resources
 SplashScreen.preventAutoHideAsync();
@@ -34,27 +36,33 @@ export default function RootLayout() {
     return null;
   }
 
-  return (
-    <>
-      <StatusBar style="light" animated translucent />
-      <GestureHandlerRootView style={{ flex: 1 }}>
-        <PaperProvider>
-          <Stack screenOptions={{ headerShown: false }}>
-            <Stack.Screen
-              name="index"
-              options={{
-                title: "",
-                headerShadowVisible: false,
-              }}
-            />
-            <Stack.Screen name="(ONBOARD)" />
-            <Stack.Screen name="(TABS)" />
-            <Stack.Screen name="(SCREENS)" />
-          </Stack>
-        </PaperProvider>
-      </GestureHandlerRootView>
+  // Create a new QueryClient instance
+  const queryClient = new QueryClient();
 
-      <Toast />
-    </>
+  return (
+    <QueryClientProvider client={queryClient}>
+      <React.Fragment>
+        <StatusBar style="light" animated translucent />
+        <GestureHandlerRootView style={{ flex: 1 }}>
+          <PaperProvider>
+            <Stack screenOptions={{ headerShown: false }}>
+              <Stack.Screen
+                name="index"
+                options={{
+                  title: "",
+                  headerShadowVisible: false,
+                }}
+              />
+              <Stack.Screen name="welcome-back-pin" />
+              <Stack.Screen name="(ONBOARD)" />
+              <Stack.Screen name="(TABS)" />
+              <Stack.Screen name="(SCREENS)" />
+            </Stack>
+          </PaperProvider>
+        </GestureHandlerRootView>
+
+        <Toast config={toastConfig} />
+      </React.Fragment>
+    </QueryClientProvider>
   );
 }

@@ -5,7 +5,7 @@ import { router } from "expo-router";
 import { getPin } from "@/lib/constants/secure-wallet";
 import * as Haptics from "expo-haptics";
 
-export default function BackupEnterPIN() {
+export default function WelcomeBackPIN() {
   // Initialize state with null
   const [pin, setPin] = useState<string | null>(null);
 
@@ -56,7 +56,7 @@ export default function BackupEnterPIN() {
     const isMatch = result as boolean;
 
     if (isMatch) {
-      router.push("/(SCREENS)/backup/backup-seedphrase");
+      router.push("/(TABS)/wallet");
     } else {
       // Trigger haptic feedback
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);

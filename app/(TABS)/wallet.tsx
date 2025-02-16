@@ -4,8 +4,9 @@ import {
   Text,
   TouchableOpacity,
   View,
+  ActivityIndicator,
 } from "react-native";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import ScreenWrapper from "@/lib/components/ScreenWrapper";
 import { HEADING_BOLD, INFO_TEXT } from "@/lib/constants/font";
 import { shortenAddress } from "@/lib/utils";
@@ -15,8 +16,28 @@ import { router } from "expo-router";
 import { TextInput } from "react-native-gesture-handler";
 import { TOKENS } from "@/lib/constants/app-data";
 import TokenCard from "@/lib/components/shared/TokenCard";
+import { getWalletData } from "@/lib/constants/secure-wallet";
 
 export default function WalletScreen() {
+  const [walletAddress, setWalletAddress] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  // Fetch wallet address on component mount
+  useEffect(() => {
+    const fetchWalletAddress = async () => {
+      try {
+        const { address } = await getWalletData();
+        setWalletAddress(address);
+      } catch (error) {
+        console.error("Error fetching wallet address:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchWalletAddress();
+  }, []);
+
   return (
     <ScreenWrapper>
       <ScrollView>
@@ -24,9 +45,15 @@ export default function WalletScreen() {
         <View style={styles.screenHead}>
           <View style={styles.screenHeadCenter}>
             <TouchableOpacity style={styles.addressContainer}>
-              <Text style={[HEADING_BOLD, { fontSize: 18 }]}>
-                {shortenAddress("0xe0806eC150E90b44122fCcf975A14D9aAafba429")}
-              </Text>
+              {loading ? (
+                <ActivityIndicator color={COLORS.decentPrimary} />
+              ) : (
+                <Text style={[HEADING_BOLD, { fontSize: 18 }]}>
+                  {walletAddress
+                    ? shortenAddress(walletAddress)
+                    : "No Wallet Found"}
+                </Text>
+              )}
               <Ionicons
                 name="copy-sharp"
                 size={15}

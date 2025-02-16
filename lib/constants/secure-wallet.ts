@@ -8,7 +8,6 @@ const PIN_KEY = "wallet_pin";
 export const savePin = async (pin: string) => {
   try {
     await SecureStore.setItemAsync(PIN_KEY, pin);
-    console.log("PIN saved successfully");
   } catch (error) {
     console.error("Error saving PIN:", error);
   }
@@ -62,6 +61,7 @@ export const removeWalletData = async () => {
   try {
     await SecureStore.deleteItemAsync(WALLET_ADDRESS_KEY);
     await SecureStore.deleteItemAsync(WALLET_PASSPHRASE);
+    await SecureStore.deleteItemAsync(PIN_KEY);
   } catch (error) {
     console.error("Error removing passcode", error);
   }

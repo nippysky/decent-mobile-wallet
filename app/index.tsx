@@ -45,7 +45,7 @@ export default function InitialRoute() {
       {newUser ? (
         <Redirect href="/(ONBOARD)/auth-page" />
       ) : (
-        <Redirect href="/(ONBOARD)/auth-page" />
+        <Redirect href="/welcome-back-pin" />
       )}
     </>
   );

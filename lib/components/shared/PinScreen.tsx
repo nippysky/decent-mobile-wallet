@@ -15,6 +15,8 @@ import ScreenWrapper from "../ScreenWrapper";
 import { COLORS } from "@/lib/constants/colors";
 import { Modal, Portal, Button, Dialog } from "react-native-paper"; // Import react-native-paper components
 import { BUTTONSTYLE } from "@/lib/constants/styles";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { removeWalletData } from "@/lib/constants/secure-wallet";
 
 const PIN_LENGTH = 5;
 
@@ -94,10 +96,11 @@ const PinScreen: React.FC<PinScreenProps> = ({
   const hideModal = () => setVisible(false);
 
   // Handle "Yes" button press in the modal
-  const handleResetWallet = () => {
+  const handleResetWallet = async () => {
     hideModal();
-    // Add logic to reset the wallet here
-    console.log("Reset wallet logic goes here");
+    await AsyncStorage.removeItem("isFirstTimeUser");
+    await removeWalletData();
+    router.replace("/(ONBOARD)/auth-page");
   };
 
   return (
@@ -248,7 +251,7 @@ const PinScreen: React.FC<PinScreenProps> = ({
                 <TouchableOpacity
                   style={[BUTTONSTYLE, { width: "45%" }]}
                   activeOpacity={0.5}
-                  onPress={() => {}}
+                  onPress={handleResetWallet}
                 >
                   <Text style={BUTTON_TEXT}>Yes</Text>
                 </TouchableOpacity>

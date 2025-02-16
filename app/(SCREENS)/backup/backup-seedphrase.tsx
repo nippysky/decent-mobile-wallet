@@ -1,12 +1,38 @@
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import React from "react";
+import {
+  ActivityIndicator,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import React, { useEffect, useState } from "react";
 import { COLORS } from "@/lib/constants/colors";
 import { BUTTON_TEXT, HEADING_BOLD, INFO_TEXT } from "@/lib/constants/font";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { BUTTONSTYLE } from "@/lib/constants/styles";
 import { router } from "expo-router";
+import { getWalletData } from "@/lib/constants/secure-wallet";
 
 export default function BackupSeedPhrase() {
+  const [passphrase, setPassPhrase] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  // Fetch wallet address on component mount
+  useEffect(() => {
+    const fetchPassPhrase = async () => {
+      try {
+        const { passphrase } = await getWalletData();
+        setPassPhrase(passphrase);
+      } catch (error) {
+        console.error("Error fetching wallet address:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPassPhrase();
+  }, []);
+
   return (
     <SafeAreaView
       style={{ flex: 1, backgroundColor: COLORS.black, padding: 20 }}
@@ -27,28 +53,23 @@ export default function BackupSeedPhrase() {
         </View>
 
         {/* PHRASE */}
-        <View
-          style={{
-            width: "100%",
-            justifyContent: "center",
-            alignItems: "center",
-            flexWrap: "wrap",
-            paddingHorizontal: 20,
-          }}
-        >
-          <Text
-            style={[
-              HEADING_BOLD,
-              {
-                color: COLORS.decentPrimary,
-                textAlign: "center",
-                lineHeight: 40,
-              },
-            ]}
-          >
-            lady does destroy word cannot their numbers and store them in a safe
-            place
-          </Text>
+        <View style={styles.phrase}>
+          {loading ? (
+            <ActivityIndicator color={COLORS.decentPrimary} />
+          ) : (
+            <Text
+              style={[
+                HEADING_BOLD,
+                {
+                  color: COLORS.decentPrimary,
+                  textAlign: "center",
+                  lineHeight: 40,
+                },
+              ]}
+            >
+              {passphrase}
+            </Text>
+          )}
         </View>
 
         {/* BUTTON */}
@@ -75,5 +96,12 @@ const styles = StyleSheet.create({
   headerSubtext: {
     marginTop: 10,
     textAlign: "center",
+  },
+  phrase: {
+    width: "100%",
+    justifyContent: "center",
+    alignItems: "center",
+    flexWrap: "wrap",
+    paddingHorizontal: 20,
   },
 });
