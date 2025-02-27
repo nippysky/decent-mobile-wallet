@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "decentroneum-wallet",
-    "slug": "decentroneum-wallet",
+    "name": "decent-wallet",
+    "slug": "decent-wallet",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/AppIcon.png",

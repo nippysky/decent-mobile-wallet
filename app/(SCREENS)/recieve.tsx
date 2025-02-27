@@ -14,8 +14,9 @@ import { COLORS } from "@/lib/constants/colors";
 import QRCode from "react-native-qrcode-svg";
 import { FontAwesome6, Ionicons, Octicons } from "@expo/vector-icons";
 import { router } from "expo-router";
-import * as Clipboard from "expo-clipboard"; // Import Clipboard module
+import * as Clipboard from "expo-clipboard";
 import { getWalletData } from "@/lib/constants/secure-wallet";
+import Toast from "react-native-toast-message";
 
 export default function Receive() {
   const [walletAddress, setWalletAddress] = useState<string | null>(null);
@@ -62,7 +63,10 @@ export default function Receive() {
   const copyAddress = async () => {
     try {
       await Clipboard.setStringAsync(walletAddress as string);
-      console.log("Address copied to clipboard!");
+      Toast.show({
+        type: "info",
+        text1: "Address copied to clipboard",
+      });
     } catch (error) {
       console.error("Oops! Failed to copy address", error);
       alert("Failed to copy address. Please try again.");

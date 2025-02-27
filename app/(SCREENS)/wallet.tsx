@@ -16,9 +16,11 @@ import { COLORS } from "@/lib/constants/colors";
 import { FontAwesome6, Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import TokenCard from "@/lib/components/shared/TokenCard";
-import { getWalletData } from "@/lib/constants/secure-wallet";
+import { getWalletData, saveTokenData } from "@/lib/constants/secure-wallet";
 import { usePostData } from "@/lib/api";
 import { Token } from "@/lib/constants/types";
+import Toast from "react-native-toast-message";
+import * as Clipboard from "expo-clipboard";
 
 export default function WalletScreen() {
   const [walletAddress, setWalletAddress] = useState<string | null>(null);
@@ -53,12 +55,12 @@ export default function WalletScreen() {
     if (walletAddress) {
       try {
         const response = await fetchNativeToken({ address: walletAddress });
-        console.log("Fetched Native Token Balance:", response.balance);
         setNativeToken({
           name: "Electroneum",
           symbol: "ETN",
           balance: response.balance,
           icon: "https://s2.coinmarketcap.com/static/img/coins/64x64/2137.png",
+          contractAddress: "", // ✅ Native token has no contract address
         });
       } catch (error) {
         console.error("Error fetching native token balance:", error);
@@ -76,7 +78,6 @@ export default function WalletScreen() {
     if (walletAddress) {
       try {
         const response = await fetchTokens({ address: walletAddress });
-        console.log("Fetched Tokens:", response.tokens);
         setTokens(response.tokens);
         setFilteredTokens(response.tokens);
       } catch (error) {
@@ -95,7 +96,7 @@ export default function WalletScreen() {
     setRefreshing(true);
     await fetchNative();
     await fetchAllTokens();
-    setRefreshing(false); // Stop refreshing only after API calls complete
+    setRefreshing(false);
   }, [fetchNative, fetchAllTokens]);
 
   // Search Functionality
@@ -112,12 +113,46 @@ export default function WalletScreen() {
     }
   }, [searchQuery, tokens]);
 
+  // ✅ Combine Tokens & Save to Secure Storage
+  useEffect(() => {
+    const combineAndSaveTokens = async () => {
+      if (nativeToken && tokens.length > 0) {
+        const combinedTokens = [
+          nativeToken, // ✅ Native token included first
+          ...tokens, // ✅ Append all other tokens
+        ];
+
+        // ✅ Save securely
+        await saveTokenData(combinedTokens);
+      }
+    };
+
+    if (nativeToken && tokens.length > 0) {
+      combineAndSaveTokens();
+    }
+  }, [nativeToken, tokens]);
+
+  // Copy Address Function
+  const copyAddress = async () => {
+    try {
+      await Clipboard.setStringAsync(walletAddress as string);
+      Toast.show({
+        type: "info",
+        text1: "Address copied to clipboard",
+      });
+    } catch (error) {
+      console.error("Oops! Failed to copy address", error);
+      alert("Failed to copy address. Please try again.");
+    }
+  };
+
   // ✅ Unified Loading State (only one loader)
   const isLoading = isLoadingNative || isLoadingTokens;
 
   return (
     <ScreenWrapper>
       <ScrollView
+        showsVerticalScrollIndicator={false}
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
@@ -129,7 +164,10 @@ export default function WalletScreen() {
         {/* Screen Head */}
         <View style={styles.screenHead}>
           <View style={styles.screenHeadCenter}>
-            <TouchableOpacity style={styles.addressContainer}>
+            <TouchableOpacity
+              style={styles.addressContainer}
+              onPress={copyAddress}
+            >
               {loadingWallet ? (
                 <ActivityIndicator color={COLORS.decentPrimary} />
               ) : (
@@ -208,7 +246,7 @@ export default function WalletScreen() {
                   iconUri={nativeToken.icon}
                   tokenName={nativeToken.name}
                   tokenSymbol={nativeToken.symbol}
-                  amount={String(nativeToken.balance)}
+                  amount={String(nativeToken.balance.toFixed(4))}
                   onPress={() =>
                     router.push({
                       pathname: "/(SCREENS)/token",
@@ -232,7 +270,7 @@ export default function WalletScreen() {
                     iconUri={token.icon}
                     tokenName={token.name}
                     tokenSymbol={token.symbol}
-                    amount={String(token.balance)}
+                    amount={String(token.balance.toFixed(4))}
                     onPress={() =>
                       router.push({
                         pathname: "/(SCREENS)/token",

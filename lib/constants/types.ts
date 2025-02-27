@@ -68,7 +68,6 @@ export type OptionCardType = {
   onPress: () => void;
 };
 
-
 export interface Token {
   name: string;
   symbol: string;

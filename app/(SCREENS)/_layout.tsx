@@ -12,6 +12,8 @@ export default function ScreensLayout() {
       <Stack.Screen name="backup/backup-note" />
       <Stack.Screen name="backup/enter-pin" />
       <Stack.Screen name="backup/backup-seedphrase" />
+      <Stack.Screen name="confirmations/send-native-confirm" />
+      <Stack.Screen name="confirmations/send-tokens-confirm" />
     </Stack>
   );
 }

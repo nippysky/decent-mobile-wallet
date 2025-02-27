@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ScreenWrapper from "@/lib/components/ScreenWrapper";
 import { COLORS } from "@/lib/constants/colors";
 import { Entypo, FontAwesome6 } from "@expo/vector-icons";
@@ -21,48 +21,29 @@ import {
 import * as Clipboard from "expo-clipboard";
 import { BUTTONSTYLE } from "@/lib/constants/styles";
 import { Modal, Searchbar, Card } from "react-native-paper";
-
-// Define the type for a cryptocurrency
-type Crypto = {
-  id: number;
-  name: string;
-  symbol: string;
-  icon: string;
-};
-
-// Dummy cryptocurrency data
-const dummyCryptos: Crypto[] = [
-  {
-    id: 1,
-    name: "Bitcoin",
-    symbol: "BTC",
-    icon: "https://s2.coinmarketcap.com/static/img/coins/64x64/1.png",
-  },
-  {
-    id: 2,
-    name: "Ethereum",
-    symbol: "ETH",
-    icon: "https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png",
-  },
-  {
-    id: 3,
-    name: "Decent",
-    symbol: "DECETN",
-    icon: "https://s2.coinmarketcap.com/static/img/coins/64x64/2137.png",
-  },
-  // Add more cryptocurrencies as needed
-];
+import { getTokenData } from "@/lib/constants/secure-wallet";
+import { Token } from "@/lib/constants/types";
 
 export default function Send() {
   const [receiverAddress, setReceiverAddress] = useState<string>("");
   const [amount, setAmount] = useState<string>("");
-  const [selectedToken, setSelectedToken] = useState<Crypto>(dummyCryptos[2]); // Default to DECETN
+  const [tokens, setTokens] = useState<Token[]>([]);
+  const [selectedToken, setSelectedToken] = useState<Token | null>(null);
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
   const [searchQuery, setSearchQuery] = useState<string>("");
 
-  //////////////////////////////////////////////////////////////////////////
+  // Fetch saved tokens from Secure Store
+  useEffect(() => {
+    const fetchTokens = async () => {
+      const savedTokens = await getTokenData();
+      if (savedTokens) {
+        setTokens(savedTokens);
+        setSelectedToken(savedTokens[0]); // ✅ Default to the first token
+      }
+    };
 
-  ///////////////////////////////////////////////////////////////////////////////
+    fetchTokens();
+  }, []);
 
   // Function to paste copied text into Receiver Address
   const pasteReceiverAddress = async (): Promise<void> => {
@@ -75,20 +56,57 @@ export default function Send() {
   };
 
   // Function to handle token selection
-  const handleTokenSelection = (token: Crypto): void => {
+  const handleTokenSelection = (token: Token): void => {
     setSelectedToken(token);
     setIsModalVisible(false);
   };
 
-  // Filter cryptocurrencies based on search query
-  const filteredCryptos = dummyCryptos.filter((crypto) =>
-    crypto.name.toLowerCase().includes(searchQuery.toLowerCase())
+  // Function to handle MAX button
+  const handleMax = () => {
+    if (selectedToken && selectedToken.balance > 0) {
+      setAmount(selectedToken.balance.toString());
+    }
+  };
+
+  // Function to handle Continue button press
+  const handleContinue = () => {
+    if (!selectedToken || !amount || !receiverAddress) return;
+
+    const isNativeToken = selectedToken.symbol === "ETN";
+    const nextScreen = isNativeToken
+      ? "/(SCREENS)/confirmations/send-native-confirm"
+      : "/(SCREENS)/confirmations/send-tokens-confirm";
+
+    router.push({
+      pathname: nextScreen,
+      params: {
+        amount,
+        receiverAddress,
+        name: selectedToken.name,
+        symbol: selectedToken.symbol,
+        icon: selectedToken.icon,
+        balance: selectedToken.balance,
+        contractAddress: selectedToken.contractAddress,
+      },
+    });
+  };
+
+  // Disable continue button if inputs are empty or amount is 0
+  const isContinueDisabled =
+    !amount.trim() || !receiverAddress.trim() || Number(amount) === 0;
+
+  // Disable amount input if balance is 0
+  const isAmountDisabled = selectedToken?.balance === 0;
+
+  // Filter tokens based on search query
+  const filteredTokens = tokens.filter((token) =>
+    token.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
     <>
       <ScreenWrapper>
-        <ScrollView>
+        <ScrollView showsVerticalScrollIndicator={false}>
           {/* Back Button */}
           <View style={styles.backButtonContainer}>
             <TouchableOpacity
@@ -133,12 +151,16 @@ export default function Send() {
             <View style={styles.inputContainer}>
               <View style={styles.inputWrapper}>
                 <TextInput
-                  style={styles.input}
+                  style={[
+                    styles.input,
+                    isAmountDisabled && { opacity: 0.5 }, // ✅ Greyed out when disabled
+                  ]}
                   placeholder="Amount"
                   placeholderTextColor={COLORS.decentAltText}
                   value={amount}
                   onChangeText={setAmount}
                   keyboardType="numeric"
+                  editable={!isAmountDisabled} // ✅ Disables input if balance is 0
                 />
 
                 {/* Select Token */}
@@ -153,25 +175,49 @@ export default function Send() {
                       gap: 8,
                     }}
                   >
-                    <Image
-                      source={{ uri: selectedToken.icon }}
-                      width={20}
-                      height={20}
-                    />
-                    <Text style={[INFO_TEXT, { color: COLORS.white }]}>
-                      {selectedToken.symbol}
-                    </Text>
+                    {selectedToken && (
+                      <>
+                        <Image
+                          source={{ uri: selectedToken.icon }}
+                          width={20}
+                          height={20}
+                        />
+                        <Text style={[INFO_TEXT, { color: COLORS.white }]}>
+                          {selectedToken.symbol}
+                        </Text>
+                      </>
+                    )}
                   </View>
                   <Entypo name="select-arrows" size={15} color={COLORS.white} />
                 </TouchableOpacity>
               </View>
             </View>
 
+            {/* Show Error Message if Balance is 0 */}
+            {isAmountDisabled && (
+              <Text style={styles.errorText}>
+                You do not have enough balance to perform this transaction.
+              </Text>
+            )}
+
             {/* Remaining & Max */}
             <View style={styles.remainAmount}>
-              <Text style={INFO_TEXT}>Remaining {"385, 000, 000"} ETN</Text>
-              <TouchableOpacity>
-                <Text style={[NORMAL_TEXT, { color: COLORS.decentPrimary }]}>
+              <Text style={INFO_TEXT}>
+                Remaining{" "}
+                {selectedToken ? selectedToken.balance.toFixed(5) : "0"}{" "}
+                {selectedToken ? selectedToken.symbol : ""}
+              </Text>
+              <TouchableOpacity onPress={handleMax} disabled={isAmountDisabled}>
+                <Text
+                  style={[
+                    NORMAL_TEXT,
+                    {
+                      color: isAmountDisabled
+                        ? COLORS.decentAltText
+                        : COLORS.decentPrimary,
+                    },
+                  ]}
+                >
                   MAX
                 </Text>
               </TouchableOpacity>
@@ -180,9 +226,13 @@ export default function Send() {
 
           {/* BUTTON */}
           <TouchableOpacity
-            style={[BUTTONSTYLE, { marginTop: 70 }]}
+            style={[
+              BUTTONSTYLE,
+              { marginTop: 70, opacity: isContinueDisabled ? 0.5 : 1 },
+            ]}
             activeOpacity={0.5}
-            onPress={() => {}}
+            onPress={handleContinue}
+            disabled={isContinueDisabled}
           >
             <Text style={BUTTON_TEXT}>Continue</Text>
           </TouchableOpacity>
@@ -205,23 +255,20 @@ export default function Send() {
             style={styles.searchBar}
           />
           <ScrollView style={styles.cryptoList}>
-            {filteredCryptos.map((crypto) => (
+            {filteredTokens.map((token, index) => (
               <TouchableOpacity
-                key={crypto.id}
-                onPress={() => handleTokenSelection(crypto)}
+                key={index}
+                onPress={() => handleTokenSelection(token)}
               >
                 <Card style={styles.cryptoCard}>
                   <Card.Content style={styles.cryptoContent}>
                     <Image
-                      source={{ uri: crypto.icon }}
+                      source={{ uri: token.icon }}
                       width={30}
                       height={30}
                     />
                     <Text style={[styles.cryptoName, NORMAL_TEXT]}>
-                      {crypto.name}
-                    </Text>
-                    <Text style={[styles.cryptoSymbol, INFO_TEXT]}>
-                      {crypto.symbol}
+                      {token.name}
                     </Text>
                   </Card.Content>
                 </Card>
@@ -233,7 +280,6 @@ export default function Send() {
     </>
   );
 }
-
 const styles = StyleSheet.create({
   backButtonContainer: {
     width: "100%",
@@ -330,6 +376,12 @@ const styles = StyleSheet.create({
   },
   cryptoSymbol: {
     color: COLORS.decentPrimary,
+    fontSize: 14,
+  },
+  errorText: {
+    color: "red",
+    textAlign: "center",
+    marginTop: 5,
     fontSize: 14,
   },
 });

@@ -21,7 +21,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function Settings() {
   const handleTelegramPress = () => {
-    Linking.openURL("https://t.me/DecentroneumChannel").catch((err) =>
+    Linking.openURL("https://t.me/DecentroneumGroupChat").catch((err) =>
       console.error("Failed to open Telegram link:", err)
     );
   };
@@ -71,7 +71,7 @@ export default function Settings() {
             icon={<Backup />}
           />
           <OptionCard
-            title={"Join our TG channel"}
+            title={"Join our Telegram Group"}
             onPress={handleTelegramPress}
             icon={<Telegram />}
           />

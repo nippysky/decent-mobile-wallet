@@ -76,7 +76,7 @@ export default function BackupSeedPhrase() {
         <TouchableOpacity
           style={[BUTTONSTYLE, { marginBottom: 30 }]}
           activeOpacity={0.5}
-          onPress={() => router.replace("/(TABS)/wallet")}
+          onPress={() => router.replace("/(SCREENS)/wallet")}
         >
           <Text style={BUTTON_TEXT}>Done backing up</Text>
         </TouchableOpacity>

@@ -66,3 +66,32 @@ export const removeWalletData = async () => {
     console.error("Error removing passcode", error);
   }
 };
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+const TOKEN_STORAGE_KEY = "SAVED_WALLET_TOKENS";
+
+/**
+ * Save combined token data securely
+ */
+export const saveTokenData = async (tokens: any[]) => {
+  try {
+    const tokenString = JSON.stringify(tokens);
+    await SecureStore.setItemAsync(TOKEN_STORAGE_KEY, tokenString);
+  } catch (error) {
+    console.error("Error saving token data:", error);
+  }
+};
+
+/**
+ * Retrieve token data securely
+ */
+export const getTokenData = async (): Promise<any[] | null> => {
+  try {
+    const tokenString = await SecureStore.getItemAsync(TOKEN_STORAGE_KEY);
+    return tokenString ? JSON.parse(tokenString) : null;
+  } catch (error) {
+    console.error("Error retrieving token data:", error);
+    return null;
+  }
+};
