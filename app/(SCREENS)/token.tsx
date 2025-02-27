@@ -50,9 +50,9 @@ export default function Token() {
         {/* ////PRICE & LOGO ///// */}
         <View style={styles.priceLogo}>
           <View style={{ flexDirection: "column", gap: 5 }}>
-            <Text style={HEADING_BOLD}>$0.385</Text>
-            <Text style={[INFO_TEXT, { color: COLORS.decentPrimary }]}>
-              + 40.35%
+            <Text style={HEADING_BOLD}>$-</Text>
+            <Text style={[INFO_TEXT, { color: COLORS.decentAltText }]}>
+              Current Price
             </Text>
           </View>
 
@@ -70,9 +70,7 @@ export default function Token() {
           <Text style={HEADING_BOLD}>
             {formatNumberCustom(Number(balance))} {symbol}
           </Text>
-          <Text style={[NORMAL_TEXT, { color: COLORS.decentAltText }]}>
-            $400,000,000.35
-          </Text>
+          <Text style={[NORMAL_TEXT, { color: COLORS.decentAltText }]}>-</Text>
         </View>
 
         {/* //////SEND , RECIEEVE, EXPLORER */}
