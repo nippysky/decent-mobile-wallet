@@ -20,7 +20,7 @@ import { BUTTONSTYLE } from "@/lib/constants/styles";
 import { router } from "expo-router";
 import Checkbox from "expo-checkbox";
 import Toast from "react-native-toast-message";
-import { useFetchData } from "@/lib/api"; // Use useFetchData for GET requests
+import { useFetchData } from "@/lib/api";
 import { saveWalletData } from "@/lib/constants/secure-wallet";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
