@@ -7,6 +7,8 @@ export function formatNumberCustom(number: number) {
 
   return formattedNumber.replace(/,/g, ",").replace(/\./g, ".");
 }
+export const API_KEY =
+  "IF-ONLY-DECETN-WILL-KNOW-WHAT-BEEN-qazwsxcdeplmoknijb-THROUGH";
 
 // FUNCTION TO SHORTEN WALLET ADDRESS
 export function shortenAddress(address: string) {

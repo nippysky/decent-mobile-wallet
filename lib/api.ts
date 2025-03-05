@@ -1,8 +1,8 @@
 import axios from "axios";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { API_KEY } from "./utils";
 
 const BASE_URL = "https://decentroneum.com";
-const API_KEY = "IF-ONLY-DECETN-WILL-KNOW-WHAT-BEEN-qazwsxcdeplmoknijb-THROUGH";
 
 // Create an Axios instance
 const apiClient = axios.create({

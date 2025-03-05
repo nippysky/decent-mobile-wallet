@@ -20,11 +20,12 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/AppIcon.png",
         "backgroundColor": "#4DEE54"
-      }
+      },
+      "package": "com.nippysky.decentmobile"
     },
     "web": {
       "bundler": "metro",
-      "output": "static",
+      "output": "server",
       "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
@@ -38,24 +39,19 @@
           "backgroundColor": "#4DEE54"
         }
       ],
-      [
-        "expo-font",
-        {
-          "fonts": [
-            "../assets/fonts/ManropeExtraBold.otf",
-            "../assets/fonts/ManropeBold.otf",
-            "../assets/fonts/ManropeSemibold.otf",
-            "../assets/fonts/ManropeMedium.otf",
-            "../assets/fonts/ManropeRegular.otf",
-            "../assets/fonts/ManropeLight.otf",
-            "../assets/fonts/ManropeThin.otf"
-          ]
-        }
-      ],
+      "expo-font",
       "expo-asset"
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "afd217d4-2287-4d3a-83fd-f9c70e393df6"
+      }
     }
   }
 }
